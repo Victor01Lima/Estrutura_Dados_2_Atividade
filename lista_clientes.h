@@ -1,6 +1,13 @@
 #ifndef LISTA_CLIENTES_H
 #define LISTA_CLIENTES_H
 
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <stdlib.h>
+#include <stdarg.h>
 #include "cliente.h"
 
 typedef struct ListaClientes {
@@ -8,24 +15,88 @@ typedef struct ListaClientes {
 	int qtd;
 } ListaClientes;
 
-// Imprime clientes
-void imprime_clientes(ListaClientes *lc);
+void imprime_clientes(ListaClientes *lc)
+{
+	int i;
+	for (i = 0; i < lc->qtd; i++) {
+		imprime_cliente(lc->lista[i]);
+	}
+}
 
-// Cria lista de clientes. Lembrar de usar libera_clientes(lista_clientes)
-ListaClientes *cria_clientes(int qtd, ...);
+ListaClientes *cria_clientes(int qtd, ...)
+{
+	va_list ap;
+	ListaClientes *lc = (ListaClientes *)  malloc(sizeof(ListaClientes));
+	lc->qtd = qtd;
+	lc->lista = (TCliente **) malloc(sizeof(TCliente *) * (qtd));
+	int i;
+	va_start(ap, qtd);
+	for (i = 0; i < qtd; i++) {
+        lc->lista[i] = va_arg(ap, TCliente *);
+    }
+    va_end(ap);
+    return lc;
+}
 
-// Salva lista de clientes no arquivo nome_arquivo
-void salva_clientes(char *nome_arquivo, ListaClientes *lc);
+void salva_clientes(char *nome_arquivo, ListaClientes *lc)
+{
+	FILE *out = fopen(nome_arquivo, "wb");
+	int i;
+	for (i = 0; i < lc->qtd; i++) {
+		salva_cliente(lc->lista[i], out);
+	}
+	fclose(out);
+}
 
-// Le lista de clientes do arquivo nome_arquivo
-ListaClientes *le_clientes(char *nome_arquivo);
+ListaClientes * le_clientes(char *nome_arquivo)
+{
+	int qtd = 0;
+	ListaClientes *lc = (ListaClientes *)  malloc(sizeof(ListaClientes));
+	FILE *in = fopen(nome_arquivo, "rb");
+	if (in != NULL) {
+		TCliente *cliente = NULL;
+		while((cliente = le_cliente(in)) != NULL) {
+			qtd += 1;
+			free(cliente);
+		}
+		fseek(in, 0, SEEK_SET);
+		lc->qtd = qtd;
+		lc->lista = (TCliente **) malloc(sizeof(TCliente *) * (qtd));
+		qtd = 0;
+		while((cliente = le_cliente(in)) != NULL) {
+			lc->lista[qtd++] = cliente;
+		}
+		fclose(in);
+	} else {
+		lc->qtd = 0;
+		lc->lista = NULL;
+	}
+	return lc;
+}
 
-// Compara duas listas de clientes
-// Retorna 1 se os clientes das duas listas forem iguais
-// e 0 caso contrario
-int cmp_clientes(ListaClientes *c1, ListaClientes *c2);
+int cmp_clientes(ListaClientes *c1, ListaClientes *c2)
+{
+	if (c1->qtd != c2->qtd) {
+		return 0;
+	}
+	int i;
+	for (i = 0; i < c1->qtd; i++) {
+		if (!cmp_cliente(c1->lista[i], c2->lista[i])) {
+			return 0;
+		}
+	}
+	return 1;
+}
 
-// Desaloca lista de clientes
-void libera_clientes(ListaClientes *lc);
+void libera_clientes(ListaClientes *lc)
+{
+	int i;
+	for (i = 0; i < lc->qtd; i++) {
+		free(lc->lista[i]);
+	}
+	free(lc->lista);
+	free(lc);
+}
+
 
 #endif
