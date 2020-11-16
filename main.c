@@ -153,7 +153,8 @@ void teste05(){
 			cria_nomes(cria_str("p3.dat"),
 			cria_nomes(cria_str("p4.dat"), NULL))));
 
-	classificacao_interna(NOME_ARQUIVO_ENTRADA, nomes, 6);
+	//classificacao_interna(NOME_ARQUIVO_ENTRADA, nomes, 6);
+	selecao_natural(NOME_ARQUIVO_ENTRADA,nomes,6,6);
 
 	p = nomes;
 	saida = le_clientes(p->nome);
@@ -183,7 +184,7 @@ void teste05(){
 
 int main(void) {
 	//Classificacao Interna. Arquivo com 2 registros ja ordenados.
-	printf("=======================\n");
+	/*printf("=======================\n");
 	printf("Execução do teste 01 \n");
 	printf("=======================\n");
 	teste01();
@@ -209,13 +210,17 @@ int main(void) {
 	printf("=======================\n");
 	teste04();
 	printf("\n");
-
-	//Classificacao Interna. Arquivo com 20 registros desordenados.
+*/
+//	Classificacao Interna. Arquivo com 20 registros desordenados.
 	printf("=======================\n");
 	printf("Execução do teste 05 \n");
 	printf("=======================\n");
 	teste05();
 	printf("\n");
 
+
+
 	return 0;
 }
+
+
