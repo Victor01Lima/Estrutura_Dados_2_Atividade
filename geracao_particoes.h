@@ -131,11 +131,11 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
     FILE *particao_saida;
     FILE *arquivo_entrada;
     // Aloca em memoria um array dinamico que sera nosso array em memoria
-    ClienteAux *array_memoria= (ClienteAux *)malloc(sizeof(ClienteAux) * M);
+    ClienteAux* array_memoria= (ClienteAux *)malloc(sizeof(ClienteAux) * M);
 
     //abre o arquivo de entrada
 
-    if (((arquivo_entrada = fopen(nome_arquivo_entrada, "rb")) == NULL) || (particao_saida=fopen(nome_particao,"wb"))){
+    if (((arquivo_entrada = fopen(nome_arquivo_entrada, "rb")) == NULL) || (particao_saida=fopen(nome_particao,"wb") ==NULL)){
        printf("Erro ao abrir arquivo de entrada ou particao de saida\n");
     }
     else{
@@ -143,6 +143,10 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
         for(int i =0; i<M;i++){
             fread(&array_memoria[i].Cliente, sizeof(TCliente), 1, arquivo_entrada);
         }
+    }
+        printf("Array em memoria\n");
+    for(int i =0; i<M;i++){
+        imprime_cliente(&array_memoria[i].Cliente);
     }
 
     while(!feof(arquivo_entrada)){
@@ -152,15 +156,15 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
         int posicao_menor=0;
         for(int i=0;i<M;i++){
             if(menor== -1){
-                if(array_memoria[i].congelado!=0){
-                    menor=array_memoria[i].Cliente->cod_cliente;
+                if(&array_memoria[i].congelado!=0){
+                    menor=&array_memoria[i].Cliente->cod_cliente;
                     posicao_menor=i;
                 }
             }
             else{
-                if(menor<array_memoria[i].Cliente->cod_cliente){
-                    if(array_memoria[i].congelado!=0){
-                        menor=array_memoria[i].Cliente->cod_cliente;
+                if(menor<&array_memoria[i].Cliente->cod_cliente){
+                    if(&array_memoria[i].congelado!=0){
+                        menor=&array_memoria[i].Cliente->cod_cliente;
                         posicao_menor=i;
                     }
                 }
@@ -168,13 +172,13 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
         }
         
         // grava o menor registro na partição de saida
-        salva_cliente(array_memoria[posicao_menor].Cliente,particao_saida);
-        recem_gravado= array_memoria[posicao_menor].Cliente;
+        salva_cliente(&array_memoria[posicao_menor].Cliente,particao_saida);
+        recem_gravado= &array_memoria[posicao_menor].Cliente;
         // substitui, no array em memoria, o registro R pelo proximo registro do arquivo entrada
         fread(&array_memoria[posicao_menor].Cliente,sizeof(TCliente),1,arquivo_entrada);
 
         // caso o recem gravado seja maior que o 
-        if(array_memoria[posicao_menor].Cliente->cod_cliente<recem_gravado->cod_cliente){
+        if(recem_gravado->cod_cliente > &array_memoria[posicao_menor].Cliente->cod_cliente){
             // considera esta posicao congelada
             array_memoria[posicao_menor].congelado=0;
         }

@@ -212,13 +212,41 @@ int main(void) {
 	printf("\n");
 */
 //	Classificacao Interna. Arquivo com 20 registros desordenados.
-	printf("=======================\n");
-	printf("Execução do teste 05 \n");
-	printf("=======================\n");
-	teste05();
-	printf("\n");
+	ListaClientes *entrada, *saida;
+	Nomes *p;
+	entrada = cria_clientes(20,
+			cliente(5, "Maria"),
+			cliente(1, "Joao"),
+			cliente(10, "Belle"),
+			cliente(20, "Mariana"),
+			cliente(3, "Matheus"),
+			cliente(87, "Jonas"),
 
+			cliente(8, "Vanessa"),
+			cliente(7, "Bruna"),
+			cliente(2, "Raphael"),
+			cliente(0, "Julia"),
+			cliente(9, "Liz"),
+			cliente(81, "Bianca"),
 
+			cliente(60, "Hugo"),
+			cliente(47, "Martim"),
+			cliente(23, "Clarissa"),
+			cliente(22, "Lucila"),
+			cliente(35, "Marceu"),
+			cliente(48, "Tatiana"),
+
+			cliente(90, "Melissa"),
+			cliente(85, "Paul"));
+		salva_clientes(NOME_ARQUIVO_ENTRADA, entrada);
+		libera_clientes(entrada);
+		nomes = cria_nomes(cria_str("p1.dat"),
+			cria_nomes(cria_str("p2.dat"),
+			cria_nomes(cria_str("p3.dat"),
+			cria_nomes(cria_str("p4.dat"), NULL))));
+		printf("\n");
+
+	selecao_com_substituicao(NOME_ARQUIVO_ENTRADA,nomes,6);
 
 	return 0;
 }
