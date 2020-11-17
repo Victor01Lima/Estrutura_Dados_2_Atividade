@@ -11,6 +11,11 @@
 
 #include "nomes.h"
 
+typedef struct ClienteAux{
+    TCliente* Cliente;
+    // 0 para True e 1 para false
+    int congelado;
+}ClienteAux;
 
 // Executa o algoritmo de geracao de particoes por Classificacao Interna
 // nome_arquivo_entrada: nome do arquivo de entrada
@@ -119,6 +124,84 @@ int esta_cheio(FILE *arquivo_entrada,int M){
 // M: tamanho do array em memoria para manipulacao dos registros
 void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_saida, int M) {
     //inserir codigo
+    // ponteiro para arquivo de entrada
+    char *nome_particao = nome_arquivos_saida->nome;
+     nome_arquivos_saida = nome_arquivos_saida->prox;
+     // ponteiros para os arquivos
+    FILE *particao_saida;
+    FILE *arquivo_entrada;
+    // Aloca em memoria um array dinamico que sera nosso array em memoria
+    ClienteAux *array_memoria= (ClienteAux *)malloc(sizeof(ClienteAux) * M);
+
+    //abre o arquivo de entrada
+
+    if (((arquivo_entrada = fopen(nome_arquivo_entrada, "rb")) == NULL) || (particao_saida=fopen(nome_particao,"wb"))){
+       printf("Erro ao abrir arquivo de entrada ou particao de saida\n");
+    }
+    else{
+        // Seleciona M elementos do arquivo para o nosso Array de mesmo tamanho
+        for(int i =0; i<M;i++){
+            fread(&array_memoria[i].Cliente, sizeof(TCliente), 1, arquivo_entrada);
+        }
+    }
+
+    while(!feof(arquivo_entrada)){
+        TCliente* recem_gravado =(TCliente *) malloc(sizeof(TCliente));
+        // seleciona no array em memoria o menor registro
+        int menor=-1;
+        int posicao_menor=0;
+        for(int i=0;i<M;i++){
+            if(menor== -1){
+                if(array_memoria[i].congelado!=0){
+                    menor=array_memoria[i].Cliente->cod_cliente;
+                    posicao_menor=i;
+                }
+            }
+            else{
+                if(menor<array_memoria[i].Cliente->cod_cliente){
+                    if(array_memoria[i].congelado!=0){
+                        menor=array_memoria[i].Cliente->cod_cliente;
+                        posicao_menor=i;
+                    }
+                }
+            }
+        }
+        
+        // grava o menor registro na partição de saida
+        salva_cliente(array_memoria[posicao_menor].Cliente,particao_saida);
+        recem_gravado= array_memoria[posicao_menor].Cliente;
+        // substitui, no array em memoria, o registro R pelo proximo registro do arquivo entrada
+        fread(&array_memoria[posicao_menor].Cliente,sizeof(TCliente),1,arquivo_entrada);
+
+        // caso o recem gravado seja maior que o 
+        if(array_memoria[posicao_menor].Cliente->cod_cliente<recem_gravado->cod_cliente){
+            // considera esta posicao congelada
+            array_memoria[posicao_menor].congelado=0;
+        }
+        //Caso existam em memória registros não congelados
+        int congelado=0;
+        for(int i=0;i<M;i++){
+            if(array_memoria[i].congelado != 0){
+                congelado++;
+                break;
+            }
+        }
+        //
+        if(congelado == 0){
+            fclose(particao_saida);
+            for(int i=0;i<M;i++){
+                array_memoria[i].congelado=1;
+            }
+            if(particao_saida = fopen(nome_arquivos_saida,"wb") == NULL ){
+                printf("Erro ao abrir novo arquivo de saida");
+            }
+            nome_arquivos_saida=nome_arquivos_saida->prox;
+
+        }
+    }
+fclose(particao_saida);
+fclose(arquivo_entrada);
+
   
 }
 
@@ -130,6 +213,7 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
 // n: tamanho do reservatorio
 void selecao_natural(char *nome_arquivo_entrada, Nomes *nome_arquivos_saida, int M, int n) {
     //TODO: Inserir aqui o codigo do algoritmo de geracao de particoes
+    // variaveis para nome das partições
     FILE *arq; //declara ponteiro para arquivo
    //abre arquivo para leitura
    //
