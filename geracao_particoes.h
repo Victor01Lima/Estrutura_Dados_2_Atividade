@@ -192,13 +192,14 @@ void selecao_com_substituicao(char *nome_arquivo_entrada, Nomes *nome_arquivos_s
             for(int i=0;i<M;i++){
                 array_memoria[i].congelado=1;
             }
-            if(particao_saida = fopen(nome_arquivos_saida,"wb") == NULL ){
+            if(particao_saida = fopen(nome_arquivos_saida->nome,"wb") == NULL ){
                 printf("Erro ao abrir novo arquivo de saida");
             }
             nome_arquivos_saida=nome_arquivos_saida->prox;
 
         }
     }
+    // fecha os arquivos usado apos o loop
 fclose(particao_saida);
 fclose(arquivo_entrada);
 
