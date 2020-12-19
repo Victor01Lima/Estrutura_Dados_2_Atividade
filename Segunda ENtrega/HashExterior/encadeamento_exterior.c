@@ -38,17 +38,24 @@ int busca(int cod_cli, char *nome_arquivo_hash, char *nome_arquivo_dados)
 	 // abre os arquivos para leitura
 	FILE *arquivo_hash= fopen(nome_arquivo_hash,"rb");
 	FILE *arquivo_dados= fopen(nome_arquivo_dados,"rb");
-
+	Cliente *c =(Cliente *) malloc(sizeof(Cliente));
 	// funcao H(x)
 	int h = hash(cod_cli,23);
-
-	while(!feof(arquivo_hash)){
-
+	int contador=0;
+	while(!feof(arquivo_dados)){
+		c= le_cliente(arquivo_dados);
+		contador++;
+		if(contador== h){
+			break;
+		}
 	}
-	Cliente *c =(Cliente *) malloc(sizeof(Cliente));
-
-
-
+	// varrer a posicao encontrada
+	while(c->prox!=-1){
+		if(c->cod_cliente==cod_cli){
+			printf("Cliente encontrado!");
+		}
+		c=c->prox;
+	}
 
 	// fecha os arquivos
 	fclose(arquivo_dados);
