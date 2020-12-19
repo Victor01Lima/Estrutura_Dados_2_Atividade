@@ -20,7 +20,7 @@ void cria_hash(char *nome_arquivo_hash, int tam)
 	{
 		// cada posicao do vetor é definida como NULL
 		Cliente_hash[i]=NULL;
-		Cliente_hash[i]->prox-1;
+		Cliente_hash[i]->prox=-1;
 		salva_cliente(Cliente_hash[i],out);
 	}
 	fclose(out);
