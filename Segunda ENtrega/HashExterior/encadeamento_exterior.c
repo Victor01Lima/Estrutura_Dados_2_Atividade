@@ -71,8 +71,18 @@ int insere(int cod_cli, char *nome_cli, char *nome_arquivo_hash, char *nome_arqu
 //2. Buscar registro na lista associada ao endereço h(x)
 //3. Se registro for encontrado, sinalizar erro
 //4. Se o registro não for encontrado, inserir no final da lista
+//Para inserir novo registro
+
+//Ao passar pelos registros procurando pela chave, guardar o endereço p do
+//primeiro nó marcado como LIBERADO (flag ocupado = FALSE )
+//Se ao chegar ao final da lista encadeada, a chave não for encontrada, gravar o registro na posição p
+//Atualizar ponteiros
+//q Nó anterior deve apontar para o registro inserido
+//q Nó inserido deve apontar para nó que era apontado pelo nó anterior
 	//TODO: Inserir aqui o codigo do algoritmo de insercao
 	// cria-se um variavel do tipo cliente para armazenar os valores vindos por parametro
+
+
 	int h = hash(cod_cli,num_registros);
 	FILE *arq;
 	Cliente *c =(Cliente *) malloc(sizeof(Cliente));
@@ -95,6 +105,7 @@ int exclui(int cod_cli, char *nome_arquivo_hash, char *nome_arquivo_dados)
 //3. Se registro for encontrado, excluir registro
 //4. Se o registro não for encontrado, sinalizar erro
 	//TODO: Inserir aqui o codigo do algoritmo de remocao
+
     return INT_MAX;
 }
 int hash(int mat, int tam){
