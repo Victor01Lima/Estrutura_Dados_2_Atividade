@@ -81,19 +81,71 @@ int insere(int cod_cli, char *nome_cli, char *nome_arquivo_hash, char *nome_arqu
 //q Nó inserido deve apontar para nó que era apontado pelo nó anterior
 	//TODO: Inserir aqui o codigo do algoritmo de insercao
 	// cria-se um variavel do tipo cliente para armazenar os valores vindos por parametro
-
-
+	Cliente *No_inserir =(Cliente *) malloc(sizeof(Cliente));
+	No_inserir->cod_cliente=cod_cli;
+	strcpy(No_inserir->nome,nome_cli);
+	Cliente *No_anterior=(Cliente *) malloc(sizeof(Cliente));
+	int posicao=0;
+	int p=-1;
 	int h = hash(cod_cli,num_registros);
 	FILE *arq;
+	FILE *arq_hash;
 	Cliente *c =(Cliente *) malloc(sizeof(Cliente));
-	if(arq=fopen(nome_arquivo_dados,"rb")==NULL){
-		printf("Erro ao abrir arquivo!\n");
+	CompartimentoHash *compartimento = (CompartimentoHash *) malloc(sizeof(CompartimentoHash));
+	arq=fopen(nome_arquivo_dados,"rb");
+	arq_hash=fopen(nome_arquivo_hash,"rb");
+
+	int aux=0;
+	while(!feof(arq_hash)){
+			compartimento= le_compartimento(arq_hash);
+			if(compartimento==h){
+				//compartimento existe, logo iremos procurar se existe um item na  lista encadeada de sua posicao
+				while(!feof(arq)){
+					c=le_cliente(arq);
+					if(aux==h){
+						while(c!=-1){
+							if(c->status=LIBERADO && p!=-1){
+								p=posicao;
+							}
+							if(cod_cli==c->cod_cliente){
+								printf("Cliente já existe, impossivel inserir!");
+								break;
+							}
+							c=c->prox;
+							posicao++;
+						}
+						// caso não exista cliente, podemos inserir.
+						if(p!=-1){
+							No_inserir->prox=-1;
+							c->prox= No_inserir;
+							printf("Cliente inserido");
+							salva_cliente(c,arq);
+							break;
+						}
+						else{
+							while(c!=-1){
+								if(c->prox==-1){
+									No_inserir->prox=-1;
+									c->prox= No_inserir;
+									salva_cliente(c,arq);
+									printf("Cliente inserido");
+									break;
+								}
+								c=c->prox;
+							}
+						}
+					}
+					aux++;
+				}
+				break;
+			}
+			//
+
 	}
 
-	Cliente *c= le_cliente(arq);
 
-
-
+	fclose(arq_hash);
+	fclose(arq);
     return INT_MAX;
 }
 
@@ -105,7 +157,32 @@ int exclui(int cod_cli, char *nome_arquivo_hash, char *nome_arquivo_dados)
 //3. Se registro for encontrado, excluir registro
 //4. Se o registro não for encontrado, sinalizar erro
 	//TODO: Inserir aqui o codigo do algoritmo de remocao
+	FILE *arq;
+	FILE *arq_hash;
+	arq=fopen(nome_arquivo_dados,"rb");
+	arq_hash=fopen(nome_arquivo_hash,"rb");
+	Cliente *c =(Cliente *) malloc(sizeof(Cliente));
+	int h=hash(cod_cli,23);
+	int contador=0;
+	while(!feof(arq)){
+		c=le_cliente(arq);
+		if(h==contador){
+			while(c!=-1){
+				if(c->cod_cliente==cod_cli){
+					c=NULL;
+					c->status=LIBERADO;
+					printf("excluidp");
+					break;
+				}
 
+				c=c->prox;
+			}
+			printf("Item não encontrado\n");
+		}
+		contador++;
+	}
+	fclose(arq_hash);
+	fclose(arq);
     return INT_MAX;
 }
 int hash(int mat, int tam){
